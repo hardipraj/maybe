@@ -22,13 +22,13 @@ module ApplicationHelper
 
   # Wrap view with <%= modal do %> ... <% end %> to have it open in a modal
   # Make sure to add data-turbo-frame="modal" to the link/button that opens the modal
-  def modal(&block)
+  def modal(options = {}, &block)
     content = capture &block
-    render partial: "shared/modal", locals: { content: content }
+    render partial: "shared/modal", locals: { content:, classes: options[:classes] }
   end
 
-  def account_groups
-    assets, liabilities = Current.family.accounts.by_group(currency: Current.family.currency, period: Period.last_30_days).values_at(:assets, :liabilities)
+  def account_groups(period: nil)
+    assets, liabilities = Current.family.accounts.by_group(currency: Current.family.currency, period: period || Period.last_30_days).values_at(:assets, :liabilities)
     [ assets.children, liabilities.children ].flatten
   end
 
@@ -53,13 +53,13 @@ module ApplicationHelper
 
   def trend_styles(trend)
     fallback = { bg_class: "bg-gray-500/5", text_class: "text-gray-500", symbol: "", icon: "minus" }
-    return fallback if trend.nil? || trend.direction == "flat"
+    return fallback if trend.nil? || trend.direction.flat?
 
     bg_class, text_class, symbol, icon = case trend.direction
     when "up"
-      trend.type == "liability" ? [ "bg-red-500/5", "text-red-500", "+", "arrow-up" ] : [ "bg-green-500/5", "text-green-500", "+", "arrow-up" ]
+      trend.favorable_direction.down? ? [ "bg-red-500/5", "text-red-500", "+", "arrow-up" ] : [ "bg-green-500/5", "text-green-500", "+", "arrow-up" ]
     when "down"
-      trend.type == "liability" ? [ "bg-green-500/5", "text-green-500", "-", "arrow-down" ] : [ "bg-red-500/5", "text-red-500", "-", "arrow-down" ]
+      trend.favorable_direction.down? ? [ "bg-green-500/5", "text-green-500", "-", "arrow-down" ] : [ "bg-red-500/5", "text-red-500", "-", "arrow-down" ]
     when "flat"
       [ "bg-gray-500/5", "text-gray-500", "", "minus" ]
     else

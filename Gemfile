@@ -7,7 +7,6 @@ gem "rails", github: "rails/rails", branch: "main"
 
 # Drivers
 gem "pg", "~> 1.5"
-gem "redis", ">= 4.0.1"
 
 # Deployment
 gem "puma", ">= 5.0"
@@ -33,30 +32,35 @@ gem "ransack"
 gem "stackprof"
 gem "sentry-ruby"
 gem "sentry-rails"
-gem "rails-settings-cached"
-gem "octokit"
+
+# Active Storage
+gem "aws-sdk-s3", require: false
+gem "image_processing", ">= 1.2"
 
 # Other
-gem "bcrypt", "~> 3.1.7"
-gem "inline_svg"
-gem "tzinfo-data", platforms: %i[ windows jruby ]
+gem "bcrypt", "~> 3.1"
 gem "faraday"
+gem "faraday-retry"
+gem "inline_svg"
+gem "octokit"
 gem "pagy"
+gem "rails-settings-cached"
+gem "tzinfo-data", platforms: %i[ windows jruby ]
 
 group :development, :test do
   gem "debug", platforms: %i[ mri windows ]
   gem "brakeman", require: false
   gem "rubocop-rails-omakase", require: false
-  gem "dotenv-rails"
-  gem "letter_opener"
   gem "i18n-tasks"
   gem "erb_lint"
 end
 
 group :development do
-  gem "web-console"
+  gem "dotenv-rails"
   gem "hotwire-livereload"
+  gem "letter_opener"
   gem "ruby-lsp-rails"
+  gem "web-console"
 end
 
 group :test do
@@ -65,4 +69,5 @@ group :test do
   gem "mocha"
   gem "vcr"
   gem "webmock"
+  gem "climate_control"
 end
